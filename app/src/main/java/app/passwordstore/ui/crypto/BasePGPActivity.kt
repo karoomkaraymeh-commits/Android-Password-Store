@@ -106,7 +106,6 @@ open class BasePGPActivity : AppCompatActivity() {
       }
     }
 
-  private var destDir: String? = null
   private val keySelectAction =
     registerForActivityResult(StartActivityForResult()) { result ->
       if (result.resultCode == RESULT_OK) {
