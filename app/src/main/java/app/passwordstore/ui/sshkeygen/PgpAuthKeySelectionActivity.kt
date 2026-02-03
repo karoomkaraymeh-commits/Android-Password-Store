@@ -8,12 +8,13 @@ package app.passwordstore.ui.sshkeygen
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.appcompat.app.AppCompatActivity
 import app.passwordstore.R
 import app.passwordstore.util.extensions.snackbar
 import app.passwordstore.util.git.sshj.SshKey
 import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.get
+import com.github.michaelbull.result.getOrThrow
 import com.github.michaelbull.result.runCatching
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import logcat.LogPriority.ERROR
@@ -22,57 +23,52 @@ import logcat.logcat
 import javax.inject.Inject
 import app.passwordstore.crypto.PGPKeyManager
 import app.passwordstore.crypto.KeyUtils
-import app.passwordstore.crypto.PGPIdentifier
+import app.passwordstore.crypto.PGPIdentifier.KeyId
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import app.passwordstore.ui.pgp.PGPKeyListActivity
+import logcat.logcat
+import dagger.hilt.android.AndroidEntryPoint
+import app.passwordstore.injection.prefs.GitSecrets
+import android.content.SharedPreferences
+import androidx.core.content.edit
+import app.passwordstore.util.settings.PreferenceKeys
 
+@AndroidEntryPoint // required for dependency injection to work
 class PgpAuthKeySelectionActivity : AppCompatActivity() {
 
-   @Inject lateinit var pgpKeyManager: PGPKeyManager
+  @Inject lateinit var pgpKeyManager: PGPKeyManager
  
   private val pgpKeySelectionAction =
     registerForActivityResult(StartActivityForResult()) { result ->
       if (result.resultCode == RESULT_OK) {
-        val data = result.data ?: return@registerForActivityResult
-        val keyId = 
-          data.getStringExtra(PGPKeyListActivity.EXTRA_SELECTED_KEY)?.let {
-		    PGPIdentifier.fromString(it)
-		  } ?: return@registerForActivityResult
-
-            
-      }
-
-      if (uri == null) {
-        finish()
-        return@registerForActivityResult
-      }
-      runCatching {
-          SshKey.import(uri)
-          Toast.makeText(
-              this,
-              resources.getString(R.string.ssh_key_success_dialog_title),
-              Toast.LENGTH_LONG,
-            )
-            .show()
-          setResult(RESULT_OK)
-          finish()
+        runCatching {
+          val data = result.data ?: return@registerForActivityResult
+          val keyId = 
+            data.getLongArrayExtra(PGPKeyListActivity.EXTRA_SELECTED_KEY)?.let {
+              if(it.isNotEmpty()) KeyId(it.last()) else null
+		    } ?: return@registerForActivityResult
+          val key = pgpKeyManager.getKeyById(keyId).get() ?: return@registerForActivityResult
+          SshKey.usePgpAuthKey(key)
         }
         .onFailure { e ->
-          MaterialAlertDialogBuilder(this)
-            .setTitle(resources.getString(R.string.ssh_key_error_dialog_title))
-            .setMessage(e.message)
-            .setPositiveButton(resources.getString(R.string.dialog_ok)) { _, _ -> finish() }
-            .show()
+          logcat(ERROR) { e.asLog() }
+          e.message?.let { message -> snackbar(message = message) }
         }
+      }
     }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     if (SshKey.exists) {
       MaterialAlertDialogBuilder(this).run {
+        setCancelable(false)  
         setTitle(R.string.ssh_keygen_existing_title)
         setMessage(R.string.ssh_keygen_replace_with_pgp_key_message)
         setPositiveButton(R.string.ssh_keygen_replace_with_pgp_key) { _, _ -> selectPgpKey() }
-        setNegativeButton(R.string.ssh_keygen_existing_keep) { _, _ -> finish() }
-        setOnCancelListener { finish() }
+        setNegativeButton(R.string.ssh_keygen_existing_keep) { _, _ ->
+          setResult(RESULT_CANCELED)
+          finish()
+        }
         show()
       }
     } else {

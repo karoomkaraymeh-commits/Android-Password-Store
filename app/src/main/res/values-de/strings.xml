@@ -96,12 +96,12 @@
   <!-- Preferences -->
   <string name="pref_category_repository_title">Repository</string>
   <string name="pref_edit_git_server_settings">Git-Server-Einstellungen</string>
-  <string name="pref_git_server_authentication">Authentifizierungseinstellungen</string>
+  <string name="pref_git_server_authentication">Authentifizierung</string>
   <string name="pref_edit_git_config">Lokale Git-Konfiguration &amp; Dienstprogramme</string>
   <string name="pref_ssh_use_pgp_key_title">PGP-Schlüssel verwenden</string>
   <string name="pref_ssh_keygen_title">Erstelle SSH-Schlüsselpaar</string>
   <string name="pref_import_ssh_key_title">Importiere SSH-Schlüssel</string>
-  <string name="pref_ssh_see_key_title">Zeige erstellten öffentlichen SSH-Schlüssel an</string>
+  <string name="pref_ssh_see_key_title">Zeige den öffentlichen SSH-Schlüssel an</string>
   <string name="pref_git_delete_repo_title">Repository löschen</string>
   <string name="pref_dialog_delete_title">Repository löschen</string>
   <string name="pref_category_general_title">Allgemein</string>
@@ -183,9 +183,9 @@
 
   <string name="ssh_keygen_explanation_rsa"><b>RSA (3072 Bit)</b>\nWird von allen Servern unterstützt, allerdings ist die Authentifizierung recht langsam.</string>
   <string name="ssh_keygen_explanation_ecdsa"><b>ECDSA (NIST P-256)</b>\nSchnelle Authentifizierung, unterstützt von den meisten Servern, die noch Updates erhalten.</string>
-  <string name="ssh_keygen_existing_title">SSH-Schlüssel</string>
+  <string name="ssh_keygen_existing_title">SSH-Schlüssel ersetzen</string>
   <string name="ssh_keygen_existing_message">Existierenden SSH-Schlüssel ersetzen? Möglicherweise verlieren Sie den Zugriff auf Ihren Server.</string>
-  <string name="ssh_keygen_replace_with_pgp_key_message">Es existiert bereits ein SSH-Schlüssel. Möchten Sie diesen entfernen und stattdessen einen PGP-Schlüssel zur Authentifizierung verwenden? Sie könnten dadurch den Zugriff auf Ihren Server verlieren.</string>
+  <string name="ssh_keygen_replace_with_pgp_key_message">Es existiert bereits ein SSH-Schlüssel. Möchten Sie diesen entfernen und stattdessen einen PGP-Schlüssel zur Authentifizierung verwenden? Möglicherweise verlieren Sie den Zugriff auf Ihren Server.</string>
   <string name="ssh_keygen_existing_replace">Ersetzen</string>
   <string name="ssh_keygen_replace_with_pgp_key">Durch PGP-Schlüssel ersetzen</string>
   <string name="ssh_keygen_existing_keep">Behalten</string>

@@ -97,12 +97,12 @@
   <!-- Preferences -->
   <string name="pref_category_repository_title">Repository</string>
   <string name="pref_edit_git_server_settings">Edit Git server settings</string>
-  <string name="pref_git_server_authentication">Authentication settings</string>
+  <string name="pref_git_server_authentication">Authentication</string>
   <string name="pref_edit_git_config">Local Git config &amp; utilities</string>
   <string name="pref_ssh_use_pgp_key_title">Use PGP key</string>
   <string name="pref_ssh_keygen_title">Generate SSH key pair</string>
   <string name="pref_import_ssh_key_title">Import SSH key</string>
-  <string name="pref_ssh_see_key_title">View generated public SSH key</string>
+  <string name="pref_ssh_see_key_title">View public SSH key</string>
   <string name="pref_git_delete_repo_title">Delete repository</string>
   <string name="pref_dialog_delete_title">Clear repository</string>
   <string name="pref_category_general_title">General</string>
@@ -184,7 +184,7 @@
   <string name="ssh_keygen_label_ecdsa">ECDSA</string>
   <string name="ssh_keygen_explanation_rsa"><b>RSA (3072 bit)</b>\nSupported by all servers, but authentication is comparatively slow.</string>
   <string name="ssh_keygen_explanation_ecdsa"><b>ECDSA (NIST P-256)</b>\nFast authentication and supported by most servers that are still receiving updates.</string>
-  <string name="ssh_keygen_existing_title">SSH key</string>
+  <string name="ssh_keygen_existing_title">Replace SSH key</string>
   <string name="ssh_keygen_existing_message">Replace existing SSH key? You might lose access to your server.</string>
   <string name="ssh_keygen_replace_with_pgp_key_message">An SSH key already exists. Do you want to remove it and use a PGP key for authentication instead? You might lose access to your server.</string>
   <string name="ssh_keygen_existing_replace">Replace</string>

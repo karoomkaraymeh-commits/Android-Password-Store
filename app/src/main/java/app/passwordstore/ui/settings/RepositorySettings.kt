@@ -6,6 +6,7 @@
 package app.passwordstore.ui.settings
 
 import app.passwordstore.ui.pgp.PGPKeyListActivity
+import androidx.appcompat.app.AppCompatActivity.RESULT_OK
 import de.Maxr1998.modernpreferences.helpers.subScreen
 import android.content.Context
 import android.content.Intent
@@ -25,6 +26,7 @@ import app.passwordstore.ui.proxy.ProxySelectorActivity
 import app.passwordstore.ui.sshkeygen.ShowSshKeyFragment
 import app.passwordstore.ui.sshkeygen.SshKeyGenActivity
 import app.passwordstore.ui.sshkeygen.SshKeyImportActivity
+import app.passwordstore.ui.sshkeygen.PgpAuthKeySelectionActivity
 import app.passwordstore.util.extensions.getString
 import app.passwordstore.util.extensions.gitSecrets
 import app.passwordstore.util.extensions.launchActivity
@@ -169,16 +171,6 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
       showSshKeyPref?.requestRebind()
     }
 
-  private val pgpKeyAction =
-    activity.registerForActivityResult(StartActivityForResult()) { result ->
-      if (result.resultCode == RESULT_OK) {
-        val data = result.data ?: return@registerForActivityResult
-        val selectedKeyId =
-          data.getStringExtra(PGPKeyListActivity.EXTRA_SELECTED_KEY)
-            ?: return@registerForActivityResult
-      }
-    }
-
   override fun provideSettings(builder: PreferenceScreen.Builder) {
     builder.apply {
       switch(PreferenceKeys.REBASE_ON_PULL) {
@@ -199,12 +191,11 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
         collapseIcon = true
         titleRes = R.string.pref_git_server_authentication
 
-        pref("_") {
+        pref(PreferenceKeys.SSH_USE_PGP_KEY) {
           titleRes = R.string.pref_ssh_use_pgp_key_title
-          persistent = false
           onClick {
-            activity.launchActivity(PGPKeyListActivity::class.java)
-            false
+            sshKeyAction.launch(Intent(activity, PgpAuthKeySelectionActivity::class.java))
+            true
           }
         }
         pref(PreferenceKeys.SSH_KEYGEN) {
