@@ -47,6 +47,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import app.passwordstore.injection.prefs.GitSecrets
 import android.content.SharedPreferences
+import app.passwordstore.crypto.PGPIdentifier
 
 private const val PROVIDER_ANDROID_KEY_STORE = "AndroidKeyStore"
 private const val KEYSTORE_ALIAS = "sshkey"
@@ -240,8 +241,6 @@ object SshKey {
   }
 
   fun generateKeystoreNativeKey(algorithm: Algorithm, requireAuthentication: Boolean) {
-    delete()
-
     // Generate Keystore-backed private key.
     val parameterSpec =
       KeyGenParameterSpec.Builder(KEYSTORE_ALIAS, KeyProperties.PURPOSE_SIGN).run {
@@ -265,6 +264,8 @@ object SshKey {
         generateKeyPair()
       }
 
+    delete()
+
     // Write public key in SSH format to .ssh_key.pub.
     publicKeyFile.writeText(toSshPublicKey(keyPair.public))
 
@@ -275,14 +276,15 @@ object SshKey {
     val publicAuthKey =
       KeyUtils.extractPublicAuthKey(key)
         ?: throw IllegalArgumentException(
-          context.getString(R.string.ssh_key_import_error_not_an_ssh_key_message)
+          context.getString(R.string.ssh_use_pgp_key_error_no_authkey_message)
         )
 
     val authKeyId = KeyUtils.tryGetKeyId(key) ?: throw NullPointerException("Could not retrieve key ID from PGP certificate")
+    val userId = KeyUtils.tryGetUserId(key)?.let { PGPIdentifier.splitUserId(it.email) } ?: authKeyId.toString()
 
     delete()
 
-    publicKeyFile.writeText(toSshPublicKey(publicAuthKey))
+    publicKeyFile.writeText(toSshPublicKey(publicAuthKey) + " " + userId)
     context.sharedPrefs.edit { putLong(PreferenceKeys.SSH_PGP_KEY_ID, authKeyId.id) }
 
     type = Type.ImportedPGP

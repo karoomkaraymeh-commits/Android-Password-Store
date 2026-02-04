@@ -13,6 +13,7 @@ import app.passwordstore.R
 import app.passwordstore.util.extensions.snackbar
 import app.passwordstore.util.git.sshj.SshKey
 import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.onSuccess
 import com.github.michaelbull.result.get
 import com.github.michaelbull.result.getOrThrow
 import com.github.michaelbull.result.runCatching
@@ -23,7 +24,7 @@ import logcat.logcat
 import javax.inject.Inject
 import app.passwordstore.crypto.PGPKeyManager
 import app.passwordstore.crypto.KeyUtils
-import app.passwordstore.crypto.PGPIdentifier.KeyId
+import app.passwordstore.crypto.PGPIdentifier
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import app.passwordstore.ui.pgp.PGPKeyListActivity
 import logcat.logcat
@@ -32,6 +33,7 @@ import app.passwordstore.injection.prefs.GitSecrets
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import app.passwordstore.util.settings.PreferenceKeys
+import com.github.michaelbull.result.fold
 
 @AndroidEntryPoint // required for dependency injection to work
 class PgpAuthKeySelectionActivity : AppCompatActivity() {
@@ -44,16 +46,30 @@ class PgpAuthKeySelectionActivity : AppCompatActivity() {
         runCatching {
           val data = result.data ?: return@registerForActivityResult
           val keyId = 
-            data.getLongArrayExtra(PGPKeyListActivity.EXTRA_SELECTED_KEY)?.let {
-              if(it.isNotEmpty()) KeyId(it.last()) else null
-		    } ?: return@registerForActivityResult
+            data.getStringExtra(PGPKeyListActivity.EXTRA_SELECTED_KEY)?.let { PGPIdentifier.fromString(it) }
+		    ?: return@registerForActivityResult
           val key = pgpKeyManager.getKeyById(keyId).get() ?: return@registerForActivityResult
           SshKey.usePgpAuthKey(key)
-        }
-        .onFailure { e ->
-          logcat(ERROR) { e.asLog() }
-          e.message?.let { message -> snackbar(message = message) }
-        }
+        }.fold(
+            success = {
+                setResult(RESULT_OK)
+                ShowSshKeyFragment().show(supportFragmentManager, "public_key")
+            },
+            failure = { e ->
+              e.printStackTrace()
+              MaterialAlertDialogBuilder(this)
+                .setCancelable(false)
+                .setTitle(R.string.error)
+                .setMessage(e.message)
+                .setPositiveButton(getString(R.string.dialog_ok)) { _, _ ->
+                  finish()
+                }
+                .show()
+            },
+          )
+      }
+      else {
+        finish()
       }
     }
 

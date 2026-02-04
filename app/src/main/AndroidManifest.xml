@@ -130,7 +130,7 @@
     <activity
       android:name=".ui.sshkeygen.PgpAuthKeySelectionActivity"
       android:exported="false"
-      android:label="@string/pref_ssh_use_pgp_key_title"
+      android:theme="@style/NoBackgroundThemeM3"
       android:windowSoftInputMode="adjustResize" />
     <activity
       android:name=".ui.sshkeygen.SshKeyImportActivity"

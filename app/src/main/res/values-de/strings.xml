@@ -31,6 +31,7 @@
   <string name="move">Verschieben</string>
   <string name="edit">Bearbeiten</string>
   <string name="delete">Löschen</string>
+  <string name="error">Fehler</string>
   <string name="password_exists_title">Passwort existiert bereits!</string>
   <string name="password_exists_message">Dies wird %1$s mit %2$s überschreiben.</string>
   <string name="password_move_error_title">Fehler beim Verschieben von Passwörtern</string>
@@ -113,8 +114,8 @@
   <string name="pref_copy_title">Kopiere Passwort automatisch</string>
   <string name="pref_copy_summary">Kopiert das Passwort in die Zwischenablage, nachdem es entschlüsselt wurde.</string>
   <string name="ssh_key_import_error_not_an_ssh_key_message">Die ausgewählte Datei scheint kein privater SSH-Schlüssel zu sein.</string>
+  <string name="ssh_use_pgp_key_error_no_authkey_message">Der ausgewählte PGP-Schlüssel stellt keinen zur Authentifizierung geeigneten Unterschlüssel bereit.</string>
   <string name="ssh_key_success_dialog_title">SSH-Schlüssel importiert</string>
-  <string name="ssh_pgp_keyselect_success_dialog_title">Authentifizierung per PGP-Schlüssel konfiguriert</string>
   <string name="ssh_key_error_dialog_title">Schlüssel-Importfehler</string>
   <string name="ssh_key_error_dialog_text">Nachricht : \n</string>
   <string name="pref_recursive_filter_title">Suche in Unterordnern</string>
@@ -311,7 +312,6 @@
   <string name="password_creation_file_encryption_succeeded_ids_message">Eintrag erfolgreich verschlüsselt für\n%1$s</string>
   <string name="password_creation_file_encryption_failed_ids_message">\n\nVerschlüsselung fehlgeschlagen für%1$s</string>
   <string name="password_creation_file_encryption_failed_expired_key">Schlüssel abgelaufen</string>
-  <string name="password_creation_file_fail_title">Fehler</string>
   <string name="password_creation_file_write_fail_message">Fehler beim Speichern der Passwortdatei im Password Store, bitte versuchen Sie es erneut.</string>
   <string name="password_creation_file_delete_fail_message">Fehler beim Löschen der Passwortdatei %1$s aus dem Password Store, bitte löschen Sie die Datei von Hand.</string>
   <string name="password_creation_unusable_encryption_key_error_message">Verschlüsseln fehlgeschlagen. Überprüfen Sie Ablaufdatum und Widerrufstatus der PGP-Schlüssel mithilfe eines externen Programms.</string>
