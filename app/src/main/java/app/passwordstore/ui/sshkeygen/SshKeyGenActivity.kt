@@ -109,10 +109,7 @@ class SshKeyGenActivity : AppCompatActivity() {
   }
 
   private suspend fun generate() {
-    binding.generate.apply {
-      text = getString(R.string.ssh_key_gen_generating_progress)
-      isEnabled = false
-    }
+    binding.generate.isEnabled = false
     binding.generate.text = getString(R.string.ssh_key_gen_generating_progress)
     val result = runCatching {
       withContext(dispatcherProvider.io()) {
@@ -138,10 +135,8 @@ class SshKeyGenActivity : AppCompatActivity() {
         keyGenType.generateKey(requireAuthentication)
       }
     }
-    binding.generate.apply {
-      text = getString(R.string.ssh_keygen_generate)
-      isEnabled = true
-    }
+    binding.generate.text = getString(R.string.ssh_keygen_generate)
+    binding.generate.isEnabled = true
     result.fold(
       success = { ShowSshKeyFragment().show(supportFragmentManager, "public_key") },
       failure = { e ->
@@ -150,7 +145,7 @@ class SshKeyGenActivity : AppCompatActivity() {
           .setCancelable(false)
           .setTitle(R.string.error_generate_ssh_key)
           .setMessage(getString(R.string.ssh_key_error_dialog_text) + e.message)
-          .setPositiveButton(getString(R.string.dialog_ok)) { _, _ ->
+          .setPositiveButton(R.string.dialog_ok) { _, _ ->
             setResult(RESULT_OK)
             finish()
           }

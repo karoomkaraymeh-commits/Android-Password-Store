@@ -205,6 +205,13 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
             true
           }
         }
+        pref(PreferenceKeys.SSH_KEY) {
+          titleRes = R.string.pref_import_ssh_key_title
+          onClick {
+            sshKeyAction.launch(Intent(activity, SshKeyImportActivity::class.java))
+            true
+          }
+        }
         showSshKeyPref =
           pref(PreferenceKeys.SSH_SEE_KEY) {
             titleRes = R.string.pref_ssh_see_key_title
@@ -214,13 +221,6 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
               true
             }
           }
-        pref(PreferenceKeys.SSH_KEY) {
-          titleRes = R.string.pref_import_ssh_key_title
-          onClick {
-            sshKeyAction.launch(Intent(activity, SshKeyImportActivity::class.java))
-            true
-          }
-        }
         pref(PreferenceKeys.CLEAR_SAVED_PASS) {
           fun Preference.updatePref() {
             val sshPass = gitOperationSecrets.getString(PreferenceKeys.SSH_KEY_LOCAL_PASSPHRASE)

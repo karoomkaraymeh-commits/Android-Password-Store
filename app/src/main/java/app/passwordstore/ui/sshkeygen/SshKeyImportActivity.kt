@@ -49,7 +49,7 @@ class SshKeyImportActivity : AppCompatActivity() {
             .setCancelable(false)
             .setTitle(R.string.ssh_key_error_dialog_title)
             .setMessage(e.message)
-            .setPositiveButton(resources.getString(R.string.dialog_ok)) { _, _ -> finish() }
+            .setPositiveButton(R.string.dialog_ok) { _, _ -> finish() }
             .show()
         }
     }

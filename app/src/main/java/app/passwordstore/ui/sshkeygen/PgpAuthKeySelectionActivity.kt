@@ -61,7 +61,7 @@ class PgpAuthKeySelectionActivity : AppCompatActivity() {
                 .setCancelable(false)
                 .setTitle(R.string.error)
                 .setMessage(e.message)
-                .setPositiveButton(getString(R.string.dialog_ok)) { _, _ ->
+                .setPositiveButton(R.string.dialog_ok) { _, _ ->
                   finish()
                 }
                 .show()

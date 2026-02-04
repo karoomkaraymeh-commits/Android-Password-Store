@@ -57,7 +57,7 @@
 
   <!-- Git Handler -->
   <string name="ssh_preferences_dialog_text">Please import or generate your SSH key file in the preferences.</string>
-  <string name="ssh_preferences_dialog_title">No SSH key</string>
+  <string name="ssh_preferences_dialog_title">No key available</string>
   <string name="button_label_import">Import</string>
   <string name="ssh_preferences_dialog_generate">Generate</string>
   <string name="passphrase_dialog_title">Authenticate</string>
