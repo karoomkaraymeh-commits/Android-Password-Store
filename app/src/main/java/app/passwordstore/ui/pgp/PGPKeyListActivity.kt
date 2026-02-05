@@ -114,12 +114,9 @@ class PGPKeyListActivity : AppCompatActivity() {
             APSAppBar(
               title =
                 if (isSelectingKeys) {
-                  if(singleSelection)  
-                    stringResource(R.string.activity_label_pgp_key_single_select)
-                  else  
-                    stringResource(R.string.activity_label_pgp_key_select)
-                }    
-                else stringResource(R.string.activity_label_pgp_key_manager),
+                  if (singleSelection) stringResource(R.string.activity_label_pgp_key_single_select)
+                  else stringResource(R.string.activity_label_pgp_key_select)
+                } else stringResource(R.string.activity_label_pgp_key_manager),
               navigationIcon = painterResource(R.drawable.ic_arrow_back_24dp),
               onNavigationIconClick = {
                 if (isSelectingKeys && selectedKeyIds.isNotEmpty()) {
@@ -131,7 +128,7 @@ class PGPKeyListActivity : AppCompatActivity() {
                 } else if (isAddingKeys && keysAdded) {
                   setResult(RESULT_OK, Intent())
                 }
-                finish()
+                if (singleSelection && selectedKeyIds.isNotEmpty() || !singleSelection) finish()
               },
               backgroundColor = MaterialTheme.colorScheme.surface,
             )

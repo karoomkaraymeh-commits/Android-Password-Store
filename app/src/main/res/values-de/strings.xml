@@ -55,10 +55,11 @@
   <string name="jgit_error_dialog_title">Es ist ein Fehler während der Git-Operation aufgetreten</string>
 
   <!-- Git Handler -->
-  <string name="ssh_preferences_dialog_text">Bitte importieren oder erstellen Sie Ihre SSH-Schlüsseldatei in den Einstellungen.</string>
-  <string name="ssh_preferences_dialog_title">Kein SSH-Schlüssel angegeben</string>
-  <string name="button_label_import">Importieren</string>
-  <string name="ssh_preferences_dialog_generate">Erstellen</string>
+  <string name="ssh_preferences_dialog_title">Schlüssel einrichten</string>
+  <string name="ssh_preferences_dialog_text">Die Public-Key-Authentifizierung erfordert einen PGP- oder SSH-Schlüssel. Diese können in der App generiert oder aus einer Datei importiert werden.</string>
+  <string name="button_label_import">SSH-Schlüssel importieren</string>
+  <string name="ssh_preferences_dialog_generate">SSH-Schlüssel erstellen</string>
+  <string name="ssh_preferences_dialog_pgp_key">PGP-Schlüssel verwenden</string>
   <string name="passphrase_dialog_title">Authentifizieren</string>
   <string name="passphrase_dialog_text">Bitte geben Sie das Passwort für Ihren SSH-Schlüssel ein.</string>
   <string name="password_dialog_text">Bitte geben Sie das Passwort für dieses Repository ein.</string>
@@ -97,12 +98,12 @@
   <!-- Preferences -->
   <string name="pref_category_repository_title">Repository</string>
   <string name="pref_edit_git_server_settings">Git-Server-Einstellungen</string>
-  <string name="pref_git_server_authentication">Authentifizierung</string>
+  <string name="pref_git_server_auth_key">Authentifizierungsschlüssel</string>
   <string name="pref_edit_git_config">Lokale Git-Konfiguration &amp; Dienstprogramme</string>
   <string name="pref_ssh_use_pgp_key_title">PGP-Schlüssel verwenden</string>
   <string name="pref_ssh_keygen_title">Erstelle SSH-Schlüsselpaar</string>
   <string name="pref_import_ssh_key_title">Importiere SSH-Schlüssel</string>
-  <string name="pref_ssh_see_key_title">Zeige den öffentlichen SSH-Schlüssel an</string>
+  <string name="pref_ssh_see_key_title">Zeige den öffentlichen Schlüssel an</string>
   <string name="pref_git_delete_repo_title">Repository löschen</string>
   <string name="pref_dialog_delete_title">Repository löschen</string>
   <string name="pref_category_general_title">Allgemein</string>
@@ -281,7 +282,7 @@
   <string name="pref_app_theme_value_dark">Dunkel</string>
   <string name="pref_app_theme_value_battery_saver">Durch Energiesparmodus gesetzt</string>
   <string name="pref_app_theme_value_follow_system">Systemstandard</string>
-  <string name="connection_mode_ssh_key">SSH-Schlüssel</string>
+  <string name="connection_mode_ssh_key">Public-Key</string>
   <string name="connection_mode_basic_authentication">Passwort</string>
   <string name="git_server_config_save_success">Konfiguration erfolgreich gespeichert</string>
   <string name="git_server_config_save_error">Die angegebene Repository-URL ist ungültig.</string>

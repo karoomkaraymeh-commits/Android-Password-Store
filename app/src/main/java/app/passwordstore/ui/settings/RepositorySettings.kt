@@ -5,9 +5,6 @@
 
 package app.passwordstore.ui.settings
 
-import app.passwordstore.ui.pgp.PGPKeyListActivity
-import androidx.appcompat.app.AppCompatActivity.RESULT_OK
-import de.Maxr1998.modernpreferences.helpers.subScreen
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutManager
@@ -23,10 +20,10 @@ import app.passwordstore.data.repo.PasswordRepository
 import app.passwordstore.ui.git.config.GitConfigActivity
 import app.passwordstore.ui.git.config.GitServerConfigActivity
 import app.passwordstore.ui.proxy.ProxySelectorActivity
+import app.passwordstore.ui.sshkeygen.PgpAuthKeySelectionActivity
 import app.passwordstore.ui.sshkeygen.ShowSshKeyFragment
 import app.passwordstore.ui.sshkeygen.SshKeyGenActivity
 import app.passwordstore.ui.sshkeygen.SshKeyImportActivity
-import app.passwordstore.ui.sshkeygen.PgpAuthKeySelectionActivity
 import app.passwordstore.util.extensions.getString
 import app.passwordstore.util.extensions.gitSecrets
 import app.passwordstore.util.extensions.launchActivity
@@ -47,6 +44,7 @@ import de.Maxr1998.modernpreferences.Preference
 import de.Maxr1998.modernpreferences.PreferenceScreen
 import de.Maxr1998.modernpreferences.helpers.onClick
 import de.Maxr1998.modernpreferences.helpers.pref
+import de.Maxr1998.modernpreferences.helpers.subScreen
 import de.Maxr1998.modernpreferences.helpers.switch
 import java.io.IOException
 import java.nio.file.FileVisitResult
@@ -189,7 +187,7 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
       }
       subScreen {
         collapseIcon = true
-        titleRes = R.string.pref_git_server_authentication
+        titleRes = R.string.pref_git_server_auth_key
 
         pref(PreferenceKeys.SSH_USE_PGP_KEY) {
           titleRes = R.string.pref_ssh_use_pgp_key_title
@@ -221,49 +219,7 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
               true
             }
           }
-        pref(PreferenceKeys.CLEAR_SAVED_PASS) {
-          fun Preference.updatePref() {
-            val sshPass = gitOperationSecrets.getString(PreferenceKeys.SSH_KEY_LOCAL_PASSPHRASE)
-            val httpsPass = gitOperationSecrets.getString(PreferenceKeys.HTTPS_PASSWORD)
-            if (sshPass == null && httpsPass == null) {
-              visible = false
-              return
-            }
-            titleRes =
-              when {
-                httpsPass != null -> R.string.clear_saved_passphrase_https
-                else -> R.string.clear_saved_passphrase_ssh
-              }
-            visible = true
-            requestRebind()
-          }
-          onClick {
-            gitOperationSecrets.edit {
-              remove(PreferenceKeys.SSH_KEY_LOCAL_PASSPHRASE)
-              remove(PreferenceKeys.HTTPS_PASSWORD)
-            }
-            updatePref()
-            true
-          }
-          updatePref()
-        }
       }
-      pref(PreferenceKeys.GIT_CONFIG) {
-        titleRes = R.string.pref_edit_git_config
-        visible = PasswordRepository.isGitRepo()
-        onClick {
-          activity.launchActivity(GitConfigActivity::class.java)
-          true
-        }
-      }
-      proxySettingsPref =
-        pref(PreferenceKeys.PROXY_SETTINGS) {
-          onClick {
-            activity.launchActivity(ProxySelectorActivity::class.java)
-            true
-          }
-          updateProxyPref()
-        }
       pref(PreferenceKeys.CLEAR_SAVED_PASS) {
         fun Preference.updatePref() {
           val sshPass = activity.gitSecrets.getString(PreferenceKeys.SSH_KEY_LOCAL_PASSPHRASE)
@@ -289,6 +245,22 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
           true
         }
         updatePref()
+      }
+      proxySettingsPref =
+        pref(PreferenceKeys.PROXY_SETTINGS) {
+          onClick {
+            activity.launchActivity(ProxySelectorActivity::class.java)
+            true
+          }
+          updateProxyPref()
+        }
+      pref(PreferenceKeys.GIT_CONFIG) {
+        titleRes = R.string.pref_edit_git_config
+        visible = PasswordRepository.isGitRepo()
+        onClick {
+          activity.launchActivity(GitConfigActivity::class.java)
+          true
+        }
       }
       pref(PreferenceKeys.EXPORT_PASSWORDS) {
         titleRes = R.string.prefs_export_passwords_title

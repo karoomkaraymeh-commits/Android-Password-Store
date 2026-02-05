@@ -17,10 +17,11 @@ import androidx.core.content.edit
 import app.passwordstore.Application
 import app.passwordstore.R
 import app.passwordstore.crypto.KeyUtils
+import app.passwordstore.crypto.PGPIdentifier
 import app.passwordstore.crypto.PGPKey
 import app.passwordstore.util.extensions.getString
-import app.passwordstore.util.extensions.sharedPrefs
 import app.passwordstore.util.extensions.gitSecrets
+import app.passwordstore.util.extensions.sharedPrefs
 import app.passwordstore.util.extensions.unsafeLazy
 import app.passwordstore.util.settings.PreferenceKeys
 import com.github.michaelbull.result.getOrElse
@@ -41,13 +42,6 @@ import net.schmizz.sshj.SSHClient
 import net.schmizz.sshj.common.Buffer
 import net.schmizz.sshj.common.KeyType
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
-import app.passwordstore.injection.prefs.GitSecrets
-import android.content.SharedPreferences
-import app.passwordstore.crypto.PGPIdentifier
 
 private const val PROVIDER_ANDROID_KEY_STORE = "AndroidKeyStore"
 private const val KEYSTORE_ALIAS = "sshkey"
@@ -127,9 +121,9 @@ object SshKey {
   private val publicKeyFile
     get() = File(context.filesDir, ".ssh_key.pub")
 
-  private var type: Type?
+  var type: Type?
     get() = Type.fromValue(context.sharedPrefs.getString(PreferenceKeys.GIT_REMOTE_KEY_TYPE))
-    set(value) =
+    private set(value) =
       context.sharedPrefs.edit { putString(PreferenceKeys.GIT_REMOTE_KEY_TYPE, value?.value) }
 
   private val isStrongBoxSupported by unsafeLazy {
@@ -138,7 +132,7 @@ object SshKey {
     else false
   }
 
-  private enum class Type(val value: String) {
+  public enum class Type(val value: String) {
     Imported("imported"),
     KeystoreNative("keystore_native"),
     LegacyGenerated("legacy_generated"),
@@ -226,9 +220,12 @@ object SshKey {
         context.getString(R.string.ssh_key_import_error_not_an_ssh_key_message)
       )
 
+    val userId = context.sharedPrefs.getString(PreferenceKeys.GIT_CONFIG_AUTHOR_EMAIL) ?: "nn@aps"
+
     // At this point, we are reasonably confident that we have actually been provided a private
     // key and delete the old key.
     delete()
+
     // Canonicalize line endings to '\n'.
     privateKeyFile.writeText(lines.joinToString("\n"))
 
@@ -264,10 +261,12 @@ object SshKey {
         generateKeyPair()
       }
 
+    val userId = context.sharedPrefs.getString(PreferenceKeys.GIT_CONFIG_AUTHOR_EMAIL) ?: "nn@aps"
+
     delete()
 
     // Write public key in SSH format to .ssh_key.pub.
-    publicKeyFile.writeText(toSshPublicKey(keyPair.public))
+    publicKeyFile.writeText(toSshPublicKey(keyPair.public) + " " + userId)
 
     type = Type.KeystoreNative
   }
@@ -279,8 +278,12 @@ object SshKey {
           context.getString(R.string.ssh_use_pgp_key_error_no_authkey_message)
         )
 
-    val authKeyId = KeyUtils.tryGetKeyId(key) ?: throw NullPointerException("Could not retrieve key ID from PGP certificate")
-    val userId = KeyUtils.tryGetUserId(key)?.let { PGPIdentifier.splitUserId(it.email) } ?: authKeyId.toString()
+    val authKeyId =
+      KeyUtils.tryGetKeyId(key)
+        ?: throw NullPointerException("Could not retrieve key ID from PGP certificate")
+    val userId =
+      KeyUtils.tryGetUserId(key)?.let { PGPIdentifier.splitUserId(it.email) }
+        ?: authKeyId.toString()
 
     delete()
 

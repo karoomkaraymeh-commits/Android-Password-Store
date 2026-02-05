@@ -56,10 +56,11 @@
   <string name="jgit_error_dialog_title">An error occurred during a Git operation</string>
 
   <!-- Git Handler -->
-  <string name="ssh_preferences_dialog_text">Please import or generate your SSH key file in the preferences.</string>
-  <string name="ssh_preferences_dialog_title">No key available</string>
-  <string name="button_label_import">Import</string>
-  <string name="ssh_preferences_dialog_generate">Generate</string>
+  <string name="ssh_preferences_dialog_title">Set up authentication key</string>
+  <string name="ssh_preferences_dialog_text">Public-key authentication requires a PGP or SSH key. These can be generated within the app or imported from a file.</string>
+  <string name="button_label_import">Import SSH key</string>
+  <string name="ssh_preferences_dialog_generate">Generate SSH key</string>
+  <string name="ssh_preferences_dialog_pgp_key">Use a PGP key</string>
   <string name="passphrase_dialog_title">Authenticate</string>
   <string name="passphrase_dialog_text">Please provide the passphrase for your SSH key.</string>
   <string name="password_dialog_text">Please provide the password for this repository.</string>
@@ -68,7 +69,7 @@
 
   <string name="server_url">Repository URL</string>
 
-  <string name="connection_mode">Authentication Mode</string>
+  <string name="connection_mode">Authentication method</string>
 
   <!-- Git Config fragment -->
   <string name="git_user_name_hint">Username</string>
@@ -98,12 +99,12 @@
   <!-- Preferences -->
   <string name="pref_category_repository_title">Repository</string>
   <string name="pref_edit_git_server_settings">Edit Git server settings</string>
-  <string name="pref_git_server_authentication">Authentication</string>
+  <string name="pref_git_server_auth_key">Authentication key</string>
   <string name="pref_edit_git_config">Local Git config &amp; utilities</string>
   <string name="pref_ssh_use_pgp_key_title">Use PGP key</string>
   <string name="pref_ssh_keygen_title">Generate SSH key pair</string>
   <string name="pref_import_ssh_key_title">Import SSH key</string>
-  <string name="pref_ssh_see_key_title">View public SSH key</string>
+  <string name="pref_ssh_see_key_title">View public key</string>
   <string name="pref_git_delete_repo_title">Delete repository</string>
   <string name="pref_dialog_delete_title">Clear repository</string>
   <string name="pref_category_general_title">General</string>
@@ -282,7 +283,7 @@
   <string name="pref_app_theme_value_dark">Dark</string>
   <string name="pref_app_theme_value_battery_saver">Set by Battery Saver</string>
   <string name="pref_app_theme_value_follow_system">System default</string>
-  <string name="connection_mode_ssh_key">SSH key</string>
+  <string name="connection_mode_ssh_key">Public-key</string>
   <string name="connection_mode_basic_authentication">Password</string>
   <string name="git_server_config_save_success">Successfully saved configuration</string>
   <string name="git_server_config_save_error">The provided repository URL is not valid.</string>
