@@ -179,7 +179,6 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
       }
       pref(PreferenceKeys.GIT_SERVER_INFO) {
         titleRes = R.string.pref_edit_git_server_settings
-        visible = PasswordRepository.isGitRepo()
         onClick {
           configureGitServer.launch(Intent(activity, GitServerConfigActivity::class.java))
           true
@@ -256,7 +255,6 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
         }
       pref(PreferenceKeys.GIT_CONFIG) {
         titleRes = R.string.pref_edit_git_config
-        visible = PasswordRepository.isGitRepo()
         onClick {
           activity.launchActivity(GitConfigActivity::class.java)
           true
