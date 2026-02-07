@@ -98,7 +98,7 @@
 
   <!-- Preferences -->
   <string name="pref_category_repository_title">Repository</string>
-  <string name="pref_edit_git_server_settings">Edit Git server settings</string>
+  <string name="pref_edit_git_server_settings">Git server settings</string>
   <string name="pref_git_server_auth_key">Authentication key</string>
   <string name="pref_edit_git_config">Local Git config &amp; utilities</string>
   <string name="pref_ssh_use_pgp_key_title">Use PGP key</string>
@@ -364,6 +364,7 @@
   <string name="select_gpg_key_title">Select\nPGP key(s)</string>
   <string name="select_gpg_key_message">Select one or multiple PGP keys that you want to initialise the store with.</string>
   <string name="gpg_key_select">Select key(s)</string>
+  <string name="gpg_key_single_select">Select key</string>
 
   <!-- SSH port validation -->
   <string name="ssh_scheme_needed_title">Potentially incorrect URL</string>
@@ -427,6 +428,7 @@
   <string name="pgp_new_passphrase_repeated">Repeat new passphrase</string>
   <string name="git_utils_reset_remote_branch_title">Remote branch name</string>
   <string name="pgp_key_manager_no_keys_guidance">Add a key using the \"+\" button below</string>
+  <string name="no_keys_selected_dialog_title">No key selected</string>
   <string name="no_keys_imported_dialog_title">No keys available</string>
   <string name="no_keys_imported_dialog_message">No PGP keys have been added to the app yet. Import a key file or create a new key in the PGP key manager.</string>
   <string name="no_keys_imported_dialog_open_key_manager">Open PGP key manager</string>

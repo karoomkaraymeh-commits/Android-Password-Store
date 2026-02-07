@@ -7,6 +7,7 @@ package app.passwordstore.ui.pgp
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.widget.CheckBox
@@ -87,6 +88,11 @@ class PGPKeyListActivity : AppCompatActivity() {
       }
     }
 
+  override fun onConfigurationChanged(newConfig: Configuration) {
+    super.onConfigurationChanged(newConfig)
+    finish()
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -119,16 +125,40 @@ class PGPKeyListActivity : AppCompatActivity() {
                 } else stringResource(R.string.activity_label_pgp_key_manager),
               navigationIcon = painterResource(R.drawable.ic_arrow_back_24dp),
               onNavigationIconClick = {
-                if (isSelectingKeys && selectedKeyIds.isNotEmpty()) {
-                  val result = Intent()
-                  result.putExtra(EXTRA_SELECTED_KEY, selectedKeyIds.joinToString(separator = "\n"))
-                  val gpgIdDest = intent.getStringExtra("SUB_PATH")
-                  gpgIdDest?.let { result.putExtra("SUB_PATH", it) }
-                  setResult(RESULT_OK, result)
+                val result = Intent()
+                if (isSelectingKeys) {
+                  if (selectedKeyIds.isNotEmpty()) {
+                    result.putExtra(
+                      EXTRA_SELECTED_KEY,
+                      selectedKeyIds.joinToString(separator = "\n"),
+                    )
+                    val gpgIdDest = intent.getStringExtra("SUB_PATH")
+                    gpgIdDest?.let { result.putExtra("SUB_PATH", it) }
+                    setResult(RESULT_OK, result)
+                    finish()
+                  } else {
+                    val okButtonText =
+                      if (singleSelection) resources.getString(R.string.gpg_key_single_select)
+                      else resources.getString(R.string.gpg_key_select)
+                    MaterialAlertDialogBuilder(this)
+                      .setTitle(R.string.no_keys_selected_dialog_title)
+                      .setPositiveButton(okButtonText, null)
+                      .setNegativeButton(
+                        R.string.pgp_key_insecure_passphrase_warning_confirm // continue anyway
+                      ) { _, _ ->
+                        setResult(RESULT_CANCELED)
+                        finish()
+                      }
+                      .setCancelable(false)
+                      .show()
+                  }
                 } else if (isAddingKeys && keysAdded) {
-                  setResult(RESULT_OK, Intent())
+                  setResult(RESULT_OK, result)
+                  finish()
+                } else {
+                  setResult(RESULT_CANCELED, result)
+                  finish()
                 }
-                if (singleSelection && selectedKeyIds.isNotEmpty() || !singleSelection) finish()
               },
               backgroundColor = MaterialTheme.colorScheme.surface,
             )

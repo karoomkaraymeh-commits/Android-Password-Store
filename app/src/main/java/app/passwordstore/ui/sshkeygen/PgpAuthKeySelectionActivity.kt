@@ -34,12 +34,14 @@ class PgpAuthKeySelectionActivity : AppCompatActivity() {
     registerForActivityResult(StartActivityForResult()) { result ->
       if (result.resultCode == RESULT_OK) {
         runCatching {
-            val data = result.data ?: return@registerForActivityResult
+            val data = result.data ?: throw NullPointerException("result data is null")
             val keyId =
               data.getStringExtra(PGPKeyListActivity.EXTRA_SELECTED_KEY)?.let {
                 PGPIdentifier.fromString(it)
-              } ?: return@registerForActivityResult
-            val key = pgpKeyManager.getKeyById(keyId).get() ?: return@registerForActivityResult
+              } ?: throw NullPointerException("key ID is null")
+            val key =
+              pgpKeyManager.getKeyById(keyId).get()
+                ?: throw NullPointerException("returned key ${keyId} is null")
             SshKey.usePgpAuthKey(key)
           }
           .fold(
