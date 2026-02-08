@@ -60,7 +60,7 @@
   <string name="ssh_preferences_dialog_text">Public-key authentication requires a PGP or SSH key. These can be generated within the app or imported from a file.</string>
   <string name="button_label_import">Import SSH key</string>
   <string name="ssh_preferences_dialog_generate">Generate SSH key</string>
-  <string name="ssh_preferences_dialog_pgp_key">Use a PGP key</string>
+  <string name="ssh_preferences_dialog_pgp_key">Select a PGP key</string>
   <string name="passphrase_dialog_title">Authenticate</string>
   <string name="passphrase_dialog_text">Please provide the passphrase for your SSH key.</string>
   <string name="password_dialog_text">Please provide the password for this repository.</string>

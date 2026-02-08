@@ -161,12 +161,35 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
       proxySettingsPref?.updateProxyPref()
     }
 
+  private fun Preference.updateShowSshKeyPref() {
+    visible = SshKey.canShowSshPublicKey
+    requestRebind()
+  }
+
   private var showSshKeyPref: Preference? = null
 
-  private val sshKeyAction =
+  private fun Preference.updateClearSavedPassPref() {
+    val sshPass = activity.gitSecrets.getString(PreferenceKeys.SSH_KEY_LOCAL_PASSPHRASE)
+    val httpsPass = activity.gitSecrets.getString(PreferenceKeys.HTTPS_PASSWORD)
+    if (sshPass == null && httpsPass == null) {
+      visible = false
+    } else {
+      titleRes =
+        when {
+          httpsPass != null -> R.string.clear_saved_passphrase_https
+          else -> R.string.clear_saved_passphrase_ssh
+        }
+      visible = true
+    }
+    requestRebind()
+  }
+
+  private var clearSavedPassPref: Preference? = null
+
+  val sshKeyAction =
     activity.registerForActivityResult(StartActivityForResult()) {
-      showSshKeyPref?.visible = SshKey.canShowSshPublicKey
-      showSshKeyPref?.requestRebind()
+      showSshKeyPref?.updateShowSshKeyPref()
+      clearSavedPassPref?.updateClearSavedPassPref()
     }
 
   override fun provideSettings(builder: PreferenceScreen.Builder) {
@@ -212,39 +235,25 @@ class RepositorySettings(private val activity: FragmentActivity) : SettingsProvi
         showSshKeyPref =
           pref(PreferenceKeys.SSH_SEE_KEY) {
             titleRes = R.string.pref_ssh_see_key_title
-            visible = SshKey.canShowSshPublicKey
             onClick {
               ShowSshKeyFragment().show(activity.supportFragmentManager, "public_key")
               true
             }
+            updateShowSshKeyPref()
           }
       }
-      pref(PreferenceKeys.CLEAR_SAVED_PASS) {
-        fun Preference.updatePref() {
-          val sshPass = activity.gitSecrets.getString(PreferenceKeys.SSH_KEY_LOCAL_PASSPHRASE)
-          val httpsPass = activity.gitSecrets.getString(PreferenceKeys.HTTPS_PASSWORD)
-          if (sshPass == null && httpsPass == null) {
-            visible = false
-            return
-          }
-          titleRes =
-            when {
-              httpsPass != null -> R.string.clear_saved_passphrase_https
-              else -> R.string.clear_saved_passphrase_ssh
+      clearSavedPassPref =
+        pref(PreferenceKeys.CLEAR_SAVED_PASS) {
+          onClick {
+            activity.gitSecrets.edit {
+              remove(PreferenceKeys.SSH_KEY_LOCAL_PASSPHRASE)
+              remove(PreferenceKeys.HTTPS_PASSWORD)
             }
-          visible = true
-          requestRebind()
-        }
-        onClick {
-          activity.gitSecrets.edit {
-            remove(PreferenceKeys.SSH_KEY_LOCAL_PASSPHRASE)
-            remove(PreferenceKeys.HTTPS_PASSWORD)
+            updateClearSavedPassPref()
+            true
           }
-          updatePref()
-          true
+          updateClearSavedPassPref()
         }
-        updatePref()
-      }
       proxySettingsPref =
         pref(PreferenceKeys.PROXY_SETTINGS) {
           onClick {

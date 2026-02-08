@@ -7,6 +7,7 @@ package app.passwordstore.ui.pgp
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
@@ -33,12 +34,15 @@ import app.passwordstore.crypto.KeyUtils
 import app.passwordstore.crypto.PGPIdentifier
 import app.passwordstore.crypto.PGPKeyManager
 import app.passwordstore.data.crypto.CryptoRepository
+import app.passwordstore.injection.prefs.SettingsPreferences
 import app.passwordstore.ui.APSAppBar
 import app.passwordstore.ui.compose.theme.APSTheme
 import app.passwordstore.ui.dialogs.AddPgpKeyBottomSheet
 import app.passwordstore.ui.dialogs.PasswordDialog
 import app.passwordstore.util.extensions.snackbar
 import app.passwordstore.util.extensions.wipe
+import app.passwordstore.util.git.sshj.SshKey
+import app.passwordstore.util.settings.PreferenceKeys
 import app.passwordstore.util.viewmodel.PGPKeyListViewModel
 import com.github.michaelbull.result.getOrThrow
 import com.github.michaelbull.result.onFailure
@@ -60,6 +64,7 @@ class PGPKeyListActivity : AppCompatActivity() {
 
   @Inject lateinit var cryptoRepository: CryptoRepository
   @Inject lateinit var pgpKeyManager: PGPKeyManager
+  @SettingsPreferences @Inject lateinit var settings: SharedPreferences
 
   /* Counter for the user's passphrase attempts */
   private var retries = 0
@@ -216,6 +221,8 @@ class PGPKeyListActivity : AppCompatActivity() {
     val keyIdPassedIn =
       KeyUtils.tryGetKeyId(pgpKeyManager.getKeyById(identifier).getOrThrow())
         ?: throw NullPointerException()
+    val pgpAuthId = settings.getLong(PreferenceKeys.SSH_PGP_KEY_ID, 0L)
+    if (keyIdPassedIn.id == pgpAuthId) SshKey.delete()
     viewModel.deleteKey(keyIdPassedIn)
   }
 

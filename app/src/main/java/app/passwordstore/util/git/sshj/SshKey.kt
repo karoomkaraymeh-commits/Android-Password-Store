@@ -173,7 +173,7 @@ object SshKey {
     ),
   }
 
-  private fun delete() {
+  fun delete() {
     androidKeystore.deleteEntry(KEYSTORE_ALIAS)
     context.sharedPrefs.edit { remove(PreferenceKeys.SSH_PGP_KEY_ID) }
     context.gitSecrets.edit { remove(PreferenceKeys.SSH_KEY_LOCAL_PASSPHRASE) }
