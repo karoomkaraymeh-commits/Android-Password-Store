@@ -75,7 +75,7 @@ object SshKey {
     get() = if (publicKeyFile.exists()) publicKeyFile.readText() else null
 
   val canShowSshPublicKey
-    get() = type in listOf(Type.LegacyGenerated, Type.KeystoreNative, Type.ImportedPGP)
+    get() = type in listOf(Type.KeystoreNative, Type.ImportedPGP)
 
   val exists
     get() = type != null
@@ -84,7 +84,6 @@ object SshKey {
     get() {
       return runCatching {
           when (type) {
-            Type.ImportedPGP -> return@runCatching true
             Type.KeystoreNative ->
               when (val key = androidKeystore.getKey(KEYSTORE_ALIAS, null)) {
                 is PrivateKey -> {
@@ -135,7 +134,6 @@ object SshKey {
   public enum class Type(val value: String) {
     Imported("imported"),
     KeystoreNative("keystore_native"),
-    LegacyGenerated("legacy_generated"),
     ImportedPGP("imported_pgp");
 
     companion object {
@@ -232,11 +230,6 @@ object SshKey {
     type = Type.Imported
   }
 
-  @Deprecated("To be used only in Migrations.kt")
-  fun useLegacyKey(isGenerated: Boolean) {
-    type = if (isGenerated) Type.LegacyGenerated else Type.Imported
-  }
-
   fun generateKeystoreNativeKey(algorithm: Algorithm, requireAuthentication: Boolean) {
     // Generate Keystore-backed private key.
     val parameterSpec =
@@ -295,7 +288,6 @@ object SshKey {
 
   fun provide(client: SSHClient, passphraseFinder: InteractivePasswordFinder): KeyProvider? =
     when (type) {
-      Type.LegacyGenerated,
       Type.Imported -> client.loadKeys(privateKeyFile.absolutePath, passphraseFinder)
       Type.KeystoreNative -> KeystoreNativeKeyProvider
       Type.ImportedPGP -> KeystoreNativeKeyProvider
