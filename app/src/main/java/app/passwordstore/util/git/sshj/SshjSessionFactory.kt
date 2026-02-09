@@ -48,25 +48,6 @@ sealed class SshAuthMethod(val activity: AppCompatActivity) {
   class SshKey(activity: AppCompatActivity) : SshAuthMethod(activity)
 }
 
-abstract class InteractivePasswordFinder(private val dispatcherProvider: DispatcherProvider) :
-  PasswordFinder {
-
-  private var isRetry = false
-
-  abstract fun askForPassword(cont: Continuation<CharArray?>, isRetry: Boolean)
-
-  override fun reqPassword(resource: Resource<*>?): CharArray {
-    val password =
-      runBlocking(dispatcherProvider.main()) {
-        suspendCoroutine { cont -> askForPassword(cont, isRetry) }
-      }
-    isRetry = true
-    return password ?: throw SSHException(DisconnectReason.AUTH_CANCELLED_BY_USER)
-  }
-
-  final override fun shouldRetry(resource: Resource<*>?) = true
-}
-
 class SshjSessionFactory(
   private val authMethod: SshAuthMethod,
   private val hostKeyFile: File,

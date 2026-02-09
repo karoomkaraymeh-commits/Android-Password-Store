@@ -17,7 +17,6 @@ import app.passwordstore.util.coroutines.DispatcherProvider
 import app.passwordstore.util.crypto.AESEncryption
 import app.passwordstore.util.crypto.AESEncryption.KeyType
 import app.passwordstore.util.extensions.gitSecrets
-import app.passwordstore.util.git.sshj.InteractivePasswordFinder
 import app.passwordstore.util.settings.AuthMode
 import app.passwordstore.util.settings.PreferenceKeys
 import com.google.android.material.checkbox.MaterialCheckBox
@@ -26,14 +25,34 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
+import net.schmizz.sshj.userauth.password.PasswordFinder
+import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.runBlocking
+import net.schmizz.sshj.userauth.password.Resource
+import net.schmizz.sshj.common.DisconnectReason
+import net.schmizz.sshj.common.SSHException
+import net.schmizz.sshj.common.SSHRuntimeException
 
 class CredentialFinder(
   private val callingActivity: FragmentActivity,
   private val authMode: AuthMode,
-  dispatcherProvider: DispatcherProvider,
-) : InteractivePasswordFinder(dispatcherProvider) {
+  private val dispatcherProvider: DispatcherProvider,
+) : PasswordFinder {
 
-  override fun askForPassword(cont: Continuation<CharArray?>, isRetry: Boolean) {
+  private var isRetry = false
+
+  override fun reqPassword(resource: Resource<*>?): CharArray {
+    val password =
+      runBlocking(dispatcherProvider.main()) {
+        suspendCoroutine { cont -> askForPassword(cont, isRetry) }
+      }
+    isRetry = true
+    return password ?: throw SSHException(DisconnectReason.AUTH_CANCELLED_BY_USER)
+  }
+
+  override fun shouldRetry(resource: Resource<*>?) = true
+
+  fun askForPassword(cont: Continuation<CharArray?>, isRetry: Boolean) {
     val credentialPref: String
     @StringRes val messageRes: Int
     @StringRes val hintRes: Int
@@ -97,7 +116,10 @@ class CredentialFinder(
             }
             cont.resume(credential)
           }
-          setOnCancelListener { cont.resume(null) }
+          setCancelable(false)
+          setNegativeButton(R.string.dialog_cancel) { _, _ -> 
+             cont.resume(null)
+          }
           setOnDismissListener { editCredential.text?.clear() }
           create()
         }

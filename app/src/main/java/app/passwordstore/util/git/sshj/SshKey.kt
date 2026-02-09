@@ -42,6 +42,7 @@ import net.schmizz.sshj.SSHClient
 import net.schmizz.sshj.common.Buffer
 import net.schmizz.sshj.common.KeyType
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider
+import net.schmizz.sshj.userauth.password.PasswordFinder
 
 private const val PROVIDER_ANDROID_KEY_STORE = "AndroidKeyStore"
 private const val KEYSTORE_ALIAS = "sshkey"
@@ -286,11 +287,11 @@ object SshKey {
     type = Type.ImportedPGP
   }
 
-  fun provide(client: SSHClient, passphraseFinder: InteractivePasswordFinder): KeyProvider? =
+  fun provide(client: SSHClient, passphraseFinder: PasswordFinder): KeyProvider? =
     when (type) {
       Type.Imported -> client.loadKeys(privateKeyFile.absolutePath, passphraseFinder)
       Type.KeystoreNative -> KeystoreNativeKeyProvider
-      Type.ImportedPGP -> KeystoreNativeKeyProvider
+      Type.ImportedPGP -> PGPAuthenticationKeyProvider(passphraseFinder)
       null -> null
     }
 
@@ -319,7 +320,7 @@ object SshKey {
     override fun getType(): KeyType = KeyType.fromKey(public)
   }
 
-  private object PGPAuthenticationKeyProvider : KeyProvider {
+  private class PGPAuthenticationKeyProvider(passphraseFinder: PasswordFinder) : KeyProvider {
 
     override fun getPublic(): PublicKey =
       runCatching { authKeyPair.getPublic() ?: throw NullPointerException() }
